@@ -41,6 +41,7 @@
         <div class="mb-4">
             <input type="text" id="nome" placeholder="Produto" class="form-control mb-2">
             <input type="text" id="descricao" placeholder="Descrição" class="form-control mb-2">
+            <input type="number" id="valor" placeholder="Valor (R$)" class="form-control mb-2">
             <!--<input type="text" id="imagem" placeholder="Imagem (ex: McD.png)" class="form-control mb-2">-->
             <select name="time" id="imagem">
             <option value="Lanche.png">Lanche</option>
@@ -48,7 +49,7 @@
             <option value="Bebida.png">Bebida</option>
             <option value="Sorvete.png">Sobremesa</option>
             </select>
-            <button onclick="adicionar()" class="btn btn-danger">Adicionar</button>
+            <button id="btnAdicionar" onclick="adicionar()" class="btn btn-danger">Adicionar</button>
         </div>
 
         <div class="row justify-content-center" id="cards"></div>
@@ -57,15 +58,24 @@
     
     <script>
         let lista = [];
+        let editandoIndex = -1;
 
         function adicionar() {
             const nome = document.getElementById("nome").value;
             const descricao = document.getElementById("descricao").value;
             const imagem = document.getElementById("imagem").value;
+            const valor = document.getElementById("valor").value;
             console.log(imagem);
 
-            lista.push({ nome, descricao, imagem });
+            if (editandoIndex === -1) {
+                lista.push({ nome, descricao, imagem, valor });
+            } else {
+                lista[editandoIndex] = { nome, descricao, imagem, valor };
+                editandoIndex = -1;
+                document.getElementById("btnAdicionar").innerText = "Adicionar";
+            }
 
+            limparCampos();
             renderizar();
         }
 
@@ -73,7 +83,7 @@
             const container = document.getElementById("cards");
             container.innerHTML = "";
 
-            lista.forEach((item) => {
+            lista.forEach((item, index) => {
                 container.innerHTML += `
                 <div class="col-md-3 mb-4">
                     <div class="card card-custom shadow">
@@ -82,14 +92,37 @@
                         <div class="card-body text-center">
                             <h5 class="card-title">${item.nome}</h5>
                             <p class="card-text">${item.descricao}</p>
-                            <button class="btn btn-primary btn-sm">Editar</button>
-                            <button class="btn btn-danger btn-sm">Remover</button>
+                            <p class="card-text"><strong>R$ ${item.valor}</strong></p>
+
+                            <button class="btn btn-primary btn-sm" onclick="editar(${index})">Editar</button>
+                            <button class="btn btn-danger btn-sm" onclick="remover(${index})">Remover</button>
                             
                         </div>
                     </div>
                 </div>
                 `;
             });
+        }
+
+        function remover(index) {
+            lista.splice(index, 1);
+            renderizar();
+        }
+
+        function editar(index) {
+            document.getElementById("nome").value = lista[index].nome;
+            document.getElementById("descricao").value = lista[index].descricao;
+            document.getElementById("imagem").value = lista[index].imagem;
+            document.getElementById("valor").value = lista[index].valor;
+
+            editandoIndex = index;
+            document.getElementById("btnAdicionar").innerText = "Salvar edição";
+        }
+
+        function limparCampos() {
+            document.getElementById("nome").value = "";
+            document.getElementById("descricao").value = "";
+            document.getElementById("valor").value = "";
         }
 </script>
 </body>
