@@ -67,6 +67,11 @@
             const valor = document.getElementById("valor").value;
             console.log(imagem);
 
+            if (nome === "" || descricao === "" || valor === "") {
+                    alert("Preencha todos os campos!");
+                    return;
+                }
+
             if (editandoIndex === -1) {
                 lista.push({ nome, descricao, imagem, valor });
             } else {
